@@ -7,12 +7,12 @@ namespace {
         using Handle = coroutine_handle<promise_type>;
 
         std::optional<T> next() {
-        	if (handle && !handle.done()) {
-        		handle.resume();
-        		return handle.promise().value;
-        	}
+            if (handle && !handle.done()) {
+                handle.resume();
+                return handle.promise().value;
+            }
 
-        	return std::nullopt;
+            return std::nullopt;
         }
 
         Generator(Generator const&) = delete;
@@ -21,52 +21,52 @@ namespace {
 
 
     private:
-    	struct Done {};
+        struct Done {};
 
     public:
         auto begin() {
-        	struct iter {
-        		std::optional<T> value;
-        		Generator gen;
+            struct iter {
+                std::optional<T> value;
+                Generator gen;
 
-        		iter& operator++() { value = gen.next(); return *this; }
-        		T& operator*() { return value.value(); }
+                iter& operator++() { value = gen.next(); return *this; }
+                T& operator*() { return value.value(); }
 
-        		bool operator!=(Done) const { return !gen.handle.done(); }
-        		bool operator==(Done) const { return gen.handle.done(); }
-        	};
+                bool operator!=(Done) const { return !gen.handle.done(); }
+                bool operator==(Done) const { return gen.handle.done(); }
+            };
 
-        	return iter{next(), std::move(*this)};
+            return iter{next(), std::move(*this)};
         }
 
         static auto end() { return Done {}; }
 
     private:
-    	Generator(Handle handle) : handle{handle} {}
+        Generator(Handle handle) : handle{handle} {}
         Handle handle;
     };
 
 
     template<class T>
     struct Generator<T>::promise_type {
-    	std::optional<T> value {std::nullopt};
+        std::optional<T> value {std::nullopt};
 
-    	Generator get_return_object() { return Generator{Handle::from_promise(*this)}; }
-    	auto initial_suspend() { return std::experimental::suspend_always{}; }
-    	auto final_suspend() { return std::experimental::suspend_always{}; }
-    	auto yield_value(T t) {
-    		value = std::move(t);
-    		return std::experimental::suspend_always{};
-    	}
+        Generator get_return_object() { return Generator{Handle::from_promise(*this)}; }
+        auto initial_suspend() { return std::experimental::suspend_always{}; }
+        auto final_suspend() { return std::experimental::suspend_always{}; }
+        auto yield_value(T t) {
+            value = std::move(t);
+            return std::experimental::suspend_always{};
+        }
 
-    	void return_void() {
-    		value.reset();
-    	}
+        void return_void() {
+            value.reset();
+        }
 
-    	void unhandled_exception() {
-    		std::puts("[gen ] Unhandled exception!");
-    		std::terminate();
-    	}
+        void unhandled_exception() {
+            std::puts("[gen ] Unhandled exception!");
+            std::terminate();
+        }
     };
 
 
