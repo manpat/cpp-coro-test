@@ -1,11 +1,7 @@
 #include "common.h"
 #include <vector>
-#include <thread>
-#include <chrono>
 #include <mutex>
 #include <array>
-
-using namespace std::literals;
 
 namespace {
     struct TaskPromise;

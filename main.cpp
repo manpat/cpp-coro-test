@@ -7,9 +7,11 @@
 void test_generator();
 void test_simple_awaitable();
 void test_executor();
+void test_symmetric();
 
 int main() {
-    // test_generator();
+    test_generator();
     // test_simple_awaitable();
-    test_executor();
+    // test_executor();
+    test_symmetric();
 }

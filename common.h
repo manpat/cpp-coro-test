@@ -7,12 +7,15 @@
 #include <numeric>
 #include <string>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 using std::experimental::coroutine_handle;
 using std::experimental::suspend_always;
 using std::experimental::suspend_never;
 using std::experimental::noop_coroutine;
 
+using namespace std::literals;
 
 struct TestScope {
     int len;

@@ -82,8 +82,6 @@ namespace {
             co_yield std::to_string(v * v);
         }
     }
-
-
 }
 
 void test_generator() {
